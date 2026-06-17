@@ -82,15 +82,15 @@ body {
     mask-image: linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 90%);
 }
 
-/* Header & Bouton Retour */
 .header {
     position: relative;
     z-index: 10;
     max-width: 410px;
-    padding: 14px 195px;
     width: 100%;
-    margin: 0;
+    padding: 14px 16px;
+    margin: 0 auto;
 }
+
 .back-btn {
     background: white;
     border: none;
@@ -148,11 +148,10 @@ body {
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
 .ticket-container { 
-    width: 65%;
+    width: 100%;
     max-width: 410px;
-    min-height: 100px; 
     margin: 0 auto;
-    padding: 12px; 
+    padding: 12px 16px;
     z-index: 3; 
     display: flex;
     flex-direction: column;
