@@ -17,17 +17,17 @@
 }
 
 .orbital-system.active-speed .bubble {
-    width: 27px !important;
-    height: 27px !important;
+    width: 28px !important;
+    height: 28px !important;
     left: calc(50% - 8px) !important;
 }
 
 .orbital-system.active-speed .green { 
-    top: -20px !important;
+    top: -35px !important;
 }
 
 .orbital-system.active-speed .brown { 
-    bottom: -20px !important;
+    bottom: -35px !important;
 }
 
 img {
@@ -160,7 +160,7 @@ body {
 
 .card-ticket {
     background: white;
-    border-radius: 12px;
+    border-radius: 11px;
     overflow: hidden;
 }
 
@@ -199,20 +199,21 @@ body {
 .ticket-title {
     color: #111111; 
     font-weight: 700; 
-    font-size: 15px;
+    font-size: 18px;
     width: 100%;
     text-align: right;
     line-height: 1.2;
 }
 
 .main-card .validity-info {
-    padding: 12px;
+    padding: 5px;
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
 }
+
 .date-label {
-    font-size: 12px;
+    font-size: 14px;
     color: #444444;
     margin-bottom: 4px;
 }
@@ -292,7 +293,7 @@ body {
 .rtc-title {
     font-weight: 700;
     color: #111111;
-    font-size: 14.5px;
+    font-size: 18px;
     text-align: right;
 }
 
@@ -307,21 +308,21 @@ body {
 .rtc-date {
     display: flex;
     align-items: center;
-    font-size: 14px;
+    font-size: 16.5px;
     color: #000000;
     font-weight: 600;
 }
 
 .rtc-serial {
     font-weight: 900;
-    font-size: 19px;
+    font-size: 22px;
     color: #000000;
     letter-spacing: 0.2px;
 }
 
 .progress-bar-container {
     width: 100%;
-    height: 12px;
+    height: 22px;
     background: white;
     border-radius: 100px;
     overflow: hidden;
