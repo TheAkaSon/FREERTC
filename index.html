@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <style>
-        /* Styles pour gérer les transitions entre les deux écrans */
         .app-screen {
             display: none;
             width: 100%;
@@ -130,11 +129,11 @@
     <div id="screen-settings" class="app-screen" style="background: #f4f6f9; font-family: -apple-system, sans-serif; justify-content: flex-start; align-items: center; padding: 20px;">
         <div style="width: 100%; max-width: 400px; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 20px; margin-top: 40px;">
             
-            <div style="font-weight: bold; color: #023177; text-align: center; font-size: 18px; letter-spacing: 0.5px;">⚙️ CONFIGURATION</div>
+            <div style="font-weight: bold; color: #023177; text-align: center; font-size: 18px; letter-spacing: 0.5px;">CONFIGURATION</div>
             
             <div style="display: flex; flex-direction: column; gap: 12px; background: #fafafa; padding: 15px; border-radius: 10px; border: 1px solid #eaeaea;">
                 
-                <div style="font-size: 13px; font-weight: 700; color: #555; margin-bottom: 2px;">⚡ SÉLECTION RAPIDE (PRESETS)</div>
+                <div style="font-size: 13px; font-weight: 700; color: #555; margin-bottom: 2px;">SÉLECTION RAPIDE (PRESETS)</div>
                 <div style="display: flex; gap: 10px; margin-bottom: 8px;">
                     <button class="preset-btn" id="preset-1">
                         <span class="preset-dot" style="background: #00ff66;"></span>
@@ -160,13 +159,13 @@
             </div>
 
             <button id="btn-clear-cache" style="background: #e53935; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; text-transform: uppercase; box-shadow: 0 2px 5px rgba(229,57,53,0.2);">
-                🗑️ Vider le cache hors-ligne (SW)
+                Vider le cache hors-ligne (SW)
             </button>
 
             <hr style="border: none; border-top: 1px solid #eee; margin: 5px 0;">
 
             <button id="btn-back-to-ticket" style="background: #023177; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 3px 6px rgba(2,49,119,0.2);">
-                ↩️ Retourner à la correspondance
+                ↩Retourner à la correspondance
             </button>
         </div>
     </div>
@@ -228,14 +227,11 @@
             navigator.serviceWorker.register('sw.js');
         }
 
-        // ==========================================
-        // LE SYSTEME DE NAVIGATION DE PAGES
-        // ==========================================
         const screenTicket = document.getElementById('screen-ticket');
         const screenSettings = document.getElementById('screen-settings');
 
         document.getElementById('btn-to-settings').addEventListener('click', (e) => {
-            e.stopPropagation(); // Évite de déclencher l'orbite lors du clic sur le bouton de config
+            e.stopPropagation();
             screenTicket.classList.remove('active');
             screenSettings.classList.add('active');
         });
@@ -245,15 +241,12 @@
             screenTicket.classList.add('active');
         });
 
-        // ==========================================
-        // EFFET INTERACTIF COMPLET (STYLE APP RTC)
-        // ==========================================
         const orbitFollower = document.getElementById('orbit-follower');
         const orbitNode = document.getElementById('orbit-node');
         let isTracking = false;
 
         function handlePointerDown(e) {
-            // Ne fait rien si on est sur les paramètres ou si on clique sur le bouton de configuration
+
             if (!screenTicket.classList.contains('active') || e.target.closest('#btn-to-settings')) return;
 
             const clientX = e.clientX || (e.touches && e.touches[0].clientX);
@@ -261,16 +254,13 @@
 
             if (clientX !== undefined && clientY !== undefined) {
                 isTracking = true;
-                
-                // 1. On applique l'accélération de la rotation non-stop
+
                 orbitNode.classList.add('active-speed');
-                
-                // 2. On change le mode de placement du parent pour pouvoir le bouger partout
+
                 orbitFollower.style.position = 'fixed';
                 orbitFollower.style.width = '60px';
                 orbitFollower.style.height = '60px';
-                
-                // Soustrait 30px (la moitié de 60px) pour centrer le cercle pile sous le doigt
+
                 orbitFollower.style.transform = `translate3d(${clientX - 30}px, ${clientY - 30}px, 0)`;
             }
         }
@@ -282,7 +272,7 @@
             const clientY = e.clientY || (e.touches && e.touches[0].clientY);
 
             if (clientX !== undefined && clientY !== undefined) {
-                // Suit le doigt en temps réel de manière fluide
+
                 orbitFollower.style.transform = `translate3d(${clientX - 30}px, ${clientY - 30}px, 0)`;
             }
         }
@@ -290,11 +280,9 @@
         function handlePointerUp() {
             if (isTracking) {
                 isTracking = false;
-                
-                // Retire la vitesse accélérée pour revenir au rythme normal de base
+
                 orbitNode.classList.remove('active-speed');
-                
-                // Remet le parent dans son conteneur d'origine au milieu du logo
+
                 orbitFollower.style.position = 'absolute';
                 orbitFollower.style.width = '100%';
                 orbitFollower.style.height = '100%';
@@ -302,19 +290,14 @@
             }
         }
 
-        // Événements Souris (Ordinateur)
         screenTicket.addEventListener('mousedown', handlePointerDown);
         window.addEventListener('mousemove', handlePointerMove);
         window.addEventListener('mouseup', handlePointerUp);
 
-        // Événements Tactiles (Téléphones)
         screenTicket.addEventListener('touchstart', handlePointerDown, { passive: true });
         window.addEventListener('touchmove', handlePointerMove, { passive: true });
         window.addEventListener('touchend', handlePointerUp);
 
-        // ==========================================
-        // SAUVEGARDE ET CHARGEMENT DU LOCALSTORAGE
-        // ==========================================
         const colorTopInput = document.getElementById('color-top');
         const colorBottomInput = document.getElementById('color-bottom');
         const greenBubble = document.querySelector('.bubble.green');
