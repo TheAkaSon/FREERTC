@@ -1,0 +1,16 @@
+{
+  "name": "RTC Nomade",
+  "short_name": "RTC",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#033682",
+  "theme_color": "#033682",
+  "orientation": "portrait",
+  "icons": [
+    { 
+      "src": "RTCLOGOTRANS.png", 
+      "sizes": "192x192", 
+      "type": "image/png" 
+    }
+  ]
+}

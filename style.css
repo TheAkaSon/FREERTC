@@ -1,0 +1,311 @@
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    -webkit-tap-highlight-color: transparent;
+}
+
+body { 
+    background: #023177; 
+    height: 100vh; 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.bg-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.bg-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.bg-pattern {
+    position: absolute; 
+    width: 160%; 
+    height: 160%; 
+    top: -20%;
+    left: -20%;
+    background-image: url('RTCLOGOTRANS.png');
+    
+    /* On garde tes bonnes dimensions pour l'espacement */
+    background-size: 175px 215px; 
+    background-repeat: repeat;
+    filter: brightness(0) invert(1); 
+    
+    /* On applique l'angle officiel combiné à un skewX pour créer la diagonale alternée */
+    transform: rotate(1deg) skewX(5deg); 
+    
+    /* On reste sur ton opacité bien visible */
+    opacity: 0.45; 
+    
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 90%);
+    mask-image: linear-gradient(to top, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 90%);
+}
+
+/* Header & Bouton Retour */
+.header {
+    position: relative;
+    z-index: 10;
+    padding: 14px;
+    max-width: 410px;
+    width: 100%;
+    margin: 0 auto;
+}
+.back-btn {
+    background: white;
+    border: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* Zone Animée */
+.animation-zone { 
+    flex: 1; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    z-index: 2; 
+    position: relative; 
+}
+
+.logo-outer-circle {
+    width: 154px;
+    height: 154px;
+    background: white;
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.droma-logo { 
+    width: 68%; 
+    height: auto;
+    object-fit: contain;
+}
+
+.orbital-system { 
+    position: absolute; 
+    width: 154px; 
+    height: 154px; 
+    animation: spin 4s linear infinite; 
+}
+.bubble { 
+    position: absolute; 
+    width: 35px; 
+    height: 35px; 
+    border-radius: 50%; 
+    left: calc(50% - 17.5px); 
+}
+.green { background: #00FF66; top: -17.5px; }
+.brown { background: #381D18; bottom: -17.5px; }
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Conteneur inférieur adaptatif téléphone */
+.ticket-container { 
+    width: 100%; 
+    max-width: 410px; 
+    margin: 0 auto;
+    padding: 12px; 
+    z-index: 3; 
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Base des cartes */
+.card-ticket {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Entête principal */
+.header-ticket { 
+    display: flex; 
+    align-items: stretch; 
+    background: #CDD4E2;
+    border-bottom: 1px solid #B0BCCF;
+}
+
+/* Badge bonhomme bien calé et arrondi */
+.verif-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 0 12px 0;
+    padding: 2px 15px; 
+    background: white;
+    border-right: 1.5px solid #305890;
+    border-bottom: 1.5px solid #305890;
+}
+.verif-badge img { 
+    height: 29px; 
+    width: auto;
+    display: block;
+}
+
+.ticket-title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: 0 8px;
+    width: 100%;
+}
+
+.ticket-title {
+    color: #111111; 
+    font-weight: 700; 
+    font-size: 15px;
+    width: 100%;
+    text-align: center; /* Centrage horizontal parfait */
+    line-height: 1.2;
+}
+
+/* Contenu de la validité */
+.main-card .validity-info {
+    padding: 12px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
+.date-label {
+    font-size: 12px;
+    color: #444444;
+    margin-bottom: 4px;
+}
+.date-item { 
+    display: flex; 
+    align-items: center; 
+    margin-bottom: 4px; 
+    font-size: 13.5px;
+}
+
+/* Icônes de calendriers strictement à la même taille et fluides selon l'écran */
+.cal-icon {
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px !important;
+    min-height: 18px !important;
+    margin-right: 8px;
+    object-fit: contain;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.text-black { color: #000000; }
+.text-bold { font-weight: 700; }
+
+.qr-box {
+    border-left: 1px solid #E2E8F0;
+    padding-left: 12px;
+}
+.qr-box img { 
+    width: 70px; 
+    height: 70px; 
+    display: block;
+}
+
+/* --- DEUXIÈME CARTE (RTC) --- */
+.rtc-card {
+    background: #CDD4E2;
+}
+.rtc-header-row {
+    display: flex;
+    align-items: stretch;
+    position: relative;
+}
+.rtc-timer-wrapper {
+    background: white;
+    border-radius: 0 0 12px 0;
+    border-right: 1.5px solid #305890;
+    border-bottom: 1.5px solid #305890;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.rtc-timer {
+    color: #2E7D32;
+    font-weight: 800;
+    padding: 6px 14px;
+    font-size: 15px;
+}
+
+/* Centrage absolu vers le milieu pour "Réservé au RTC" */
+.rtc-title-wrapper-centered {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+.rtc-title {
+    font-weight: 700;
+    color: #111111;
+    font-size: 14.5px;
+    text-align: center;
+}
+
+.rtc-body {
+    background: white;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+.rtc-date {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #000000;
+    font-weight: 600;
+}
+.rtc-serial {
+    font-weight: 900;
+    font-size: 19px;
+    color: #000000;
+    letter-spacing: 0.2px;
+}
+
+/* Barre de progression inférieure */
+.progress-bar-container {
+    width: 100%;
+    height: 14px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 2px;
+}
+.progress-fill {
+    width: 1%;
+    height: 100%;
+    background: #2E7D32;
+    border-radius: 10px 0 0 10px;
+    transition: width 1s linear;
+}
