@@ -91,7 +91,7 @@
                             <img src="CONFIRMGRENTRANS.png" class="cal-icon" alt="Valid">
                             <span id="activation-date">--/--/---- à --:--</span>
                         </div>
-                        <div class="date-item text-black text-bold">
+                        <div class="date-item text-black expiration-style">
                             <img src="EXPIRELOGO.png" class="cal-icon" alt="Expire">
                             <span id="expiration-date">--/--/---- à --:--</span>
                         </div>
@@ -173,6 +173,17 @@
     <script>
         function formatTwoDigits(n) { return n < 10 ? '0' + n : n; }
 
+function formatAMPM(date) {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'p.m.' : 'a.m.';
+    
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    
+    return `${hours}:${formatTwoDigits(minutes)} ${ampm}`;
+}
+
         function generateRTCSerial() {
             const characters = '0123456789ABCDEF';
             let result = '1-';
@@ -187,8 +198,9 @@
         const expire = new Date(now.getTime() + 90 * 60 * 1000); 
 
         const dateStr = `${formatTwoDigits(now.getDate())}/${formatTwoDigits(now.getMonth() + 1)}/${now.getFullYear()}`;
-        const timeStr = `${formatTwoDigits(now.getHours())}:${formatTwoDigits(now.getMinutes())}`;
-        const expireTimeStr = `${formatTwoDigits(expire.getHours())}:${formatTwoDigits(expire.getMinutes())}`;
+
+        const timeStr = formatAMPM(now);
+        const expireTimeStr = formatAMPM(expire);
 
         const fullActivation = `${dateStr} à ${timeStr}`;
         const fullExpiration = `${dateStr} à ${expireTimeStr}`;
@@ -214,7 +226,8 @@
 
             let mins = Math.floor(elapsedSeconds / 60);
             let secs = elapsedSeconds % 60;
-            timerDisplay.textContent = `${mins}:${formatTwoDigits(secs)}`;
+
+            timerDisplay.textContent = `${formatTwoDigits(mins)}:${formatTwoDigits(secs)}`;
 
             let percentage = 1 + (elapsedSeconds / totalDuration) * 99;
             progressBar.style.width = `${percentage}%`;
