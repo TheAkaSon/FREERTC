@@ -148,7 +148,7 @@ body {
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
 .ticket-container { 
-    width: 42%;
+    width: 100%;
     max-width: 410px;
     margin: 0 auto;
     padding: 12px 16px;
