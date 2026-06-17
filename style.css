@@ -87,8 +87,8 @@ body {
 }
 
 .logo-outer-circle {
-    width: 154px;
-    height: 154px;
+    width: 210px;
+    height: 210px;
     background: white;
     border-radius: 50%;
     position: relative;
@@ -98,21 +98,21 @@ body {
 }
 
 .droma-logo { 
-    width: 68%; 
+    width: 90%; 
     height: auto;
     object-fit: contain;
 }
 
 .orbital-system { 
     position: absolute; 
-    width: 154px; 
-    height: 154px; 
+    width: 210px; 
+    height: 210px; 
     animation: spin 4s linear infinite; 
 }
 .bubble { 
     position: absolute; 
-    width: 35px; 
-    height: 35px; 
+    width: 40px; 
+    height: 40px; 
     border-radius: 50%; 
     left: calc(50% - 17.5px); 
 }
@@ -123,8 +123,9 @@ body {
 
 /* Conteneur inférieur adaptatif téléphone */
 .ticket-container { 
-    width: 100%; 
-    max-width: 410px; 
+    width: 65%;
+    max-width: 410px;
+    min-height: 100px; 
     margin: 0 auto;
     padding: 12px; 
     z-index: 3; 
