@@ -13,21 +13,21 @@
 .orbital-system.active-speed {
     width: 60px !important;
     height: 60px !important;
-    animation: spin 0.55s linear infinite !important;
+    animation: spin 0.4s linear infinite !important;
 }
 
 .orbital-system.active-speed .bubble {
-    width: 28px !important;
-    height: 28px !important;
+    width: 40px !important;
+    height: 40px !important;
     left: calc(50% - 8px) !important;
 }
 
 .orbital-system.active-speed .green { 
-    top: -35px !important;
+    top: -55px !important;
 }
 
 .orbital-system.active-speed .brown { 
-    bottom: -35px !important;
+    bottom: -55px !important;
 }
 
 img {
@@ -37,7 +37,7 @@ img {
 }
 
 body { 
-    background: #023177; 
+    background: #044499; 
     height: 100vh; 
     display: flex; 
     flex-direction: column; 
@@ -72,6 +72,7 @@ body {
     background-image: url('RTCLOGOTRANS.png');
 
     background-size: 230px 180px; 
+
     background-repeat: repeat;
     filter: brightness(0) invert(1); 
 
@@ -135,15 +136,16 @@ body {
     height: 202px; 
     animation: spin 4s linear infinite; 
 }
+
 .bubble { 
     position: absolute; 
-    width: 40px; 
-    height: 40px; 
+    width: 50px; 
+    height: 50px; 
     border-radius: 50%; 
     left: calc(50% - 17.5px); 
 }
-.green { background: #00FF66; top: -17.5px; }
-.brown { background: #381D18; bottom: -17.5px; }
+.green { background: #00FF66; top: -28px; }
+.brown { background: #381D18; bottom: -28px; }
 
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
@@ -198,7 +200,7 @@ body {
 
 .ticket-title {
     color: #111111; 
-    font-weight: 700; 
+    font-weight: 645; 
     font-size: 18px;
     width: 100%;
     text-align: right;
@@ -215,13 +217,13 @@ body {
 .date-label {
     font-size: 14px;
     color: #444444;
-    margin-bottom: 4px;
+    margin-bottom: 0.5px;
 }
 .date-item { 
     display: flex; 
     align-items: center; 
-    margin-bottom: 4px; 
-    font-size: 13.5px;
+    margin-bottom: 1px; 
+    font-size: 14px;
 }
 
 .cal-icon {
@@ -229,7 +231,7 @@ body {
     height: 18px !important;
     min-width: 18px !important;
     min-height: 18px !important;
-    margin-right: 8px;
+    margin-right: 2.5px;
     object-fit: contain;
     display: inline-block;
     vertical-align: middle;
@@ -241,7 +243,7 @@ body {
 
 .expiration-style {
     font-weight: 600 !important;
-    font-size: 14.5px !important;
+    font-size: 16px !important;
 }
 
 .qr-box {
@@ -291,7 +293,7 @@ body {
 }
 
 .rtc-title {
-    font-weight: 700;
+    font-weight: 645;
     color: #111111;
     font-size: 18px;
     text-align: right;
@@ -308,14 +310,14 @@ body {
 .rtc-date {
     display: flex;
     align-items: center;
-    font-size: 16.5px;
+    font-size: 14.7px;
     color: #000000;
-    font-weight: 600;
+    font-weight: 400;
 }
 
 .rtc-serial {
     font-weight: 900;
-    font-size: 22px;
+    font-size: 23px;
     color: #000000;
     letter-spacing: 0.2px;
 }
@@ -333,7 +335,7 @@ body {
 .progress-fill {
     width: 1%;
     height: 100%;
-    background: #2E7D32;
+    background: #308806;
     border-radius: 100px 0 0 100px;
     transition: width 1s linear;
 }
@@ -349,4 +351,25 @@ body {
     flex-direction: column;
     align-items: flex-start;
     flex: 1;
+}
+
+#screen-settings {
+    background: #ffffff !important;
+    z-index: 100;
+    padding: 0 !important;
+    overflow-y: auto;
+}
+
+.app-screen {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.app-screen.active {
+    display: flex;
 }

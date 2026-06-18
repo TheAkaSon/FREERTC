@@ -6,46 +6,16 @@
     <title>RTC Nomade</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <style>
-        .app-screen {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            flex-direction: column;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        .app-screen.active {
-            display: flex;
-        }
-        /* Style des boutons rapides */
-        .preset-btn {
-            flex: 1;
-            border: 1px solid #ccc;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            transition: background 0.2s;
-        }
-        .preset-btn:active {
-            background: #f0f0f0;
-        }
-        .preset-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-    </style>
 </head>
+
+<script>
+    // Chargement ultra-rapide avant le rendu du reste
+    const savedTop = localStorage.getItem('rtc-top-color');
+    const savedBottom = localStorage.getItem('rtc-bottom-color');
+    if (savedTop) document.documentElement.style.setProperty('--green-bubble', savedTop);
+    // Note : Cela demande d'avoir défini --green-bubble dans votre style.css
+</script>
+
 <body>
 
     <div id="screen-ticket" class="app-screen active">
@@ -69,6 +39,20 @@
                         <div class="bubble green"></div>
                         <div class="bubble brown"></div>
                     </div>
+                    
+                    <script>
+    (function() {
+        const savedTop = localStorage.getItem('rtc-top-color');
+        const savedBottom = localStorage.getItem('rtc-bottom-color');
+        const sheet = document.createElement('style');
+        sheet.innerHTML = `
+            .bubble.green { background-color: ${savedTop || '#00ff66'} !important; }
+            .bubble.brown { background-color: ${savedBottom || '#381d18'} !important; }
+        `;
+        document.head.appendChild(sheet);
+    })();
+</script>
+
                 </div>
             </div>
         </section>
@@ -125,263 +109,243 @@
             </div>
         </main>
     </div>
-
-    <div id="screen-settings" class="app-screen" style="background: #f4f6f9; font-family: -apple-system, sans-serif; justify-content: flex-start; align-items: center; padding: 20px;">
-        <div style="width: 100%; max-width: 400px; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 20px; margin-top: 40px;">
-            
-            <div style="font-weight: bold; color: #023177; text-align: center; font-size: 18px; letter-spacing: 0.5px;">CONFIGURATION</div>
-            
-            <div style="display: flex; flex-direction: column; gap: 12px; background: #fafafa; padding: 15px; border-radius: 10px; border: 1px solid #eaeaea;">
-                
-                <div style="font-size: 13px; font-weight: 700; color: #555; margin-bottom: 2px;">SÉLECTION RAPIDE (PRESETS)</div>
-                <div style="display: flex; gap: 10px; margin-bottom: 8px;">
-                    <button class="preset-btn" id="preset-1">
-                        <span class="preset-dot" style="background: #00ff66;"></span>
-                        <span class="preset-dot" style="background: #381d18;"></span>
-                        Vert / Brun
-                    </button>
-                    <button class="preset-btn" id="preset-2">
-                        <span class="preset-dot" style="background: #ffcc00;"></span>
-                        <span class="preset-dot" style="background: #0066cc;"></span>
-                        Jaune / Bleu
-                    </button>
-                </div>
-
-                <hr style="border: none; border-top: 1px dashed #ddd; margin: 4px 0;">
-
-                <div style="font-size: 13px; font-weight: 700; color: #555; margin-bottom: 5px;">CHOIX PRÉCIS AU BESOIN</div>
-                <label style="font-size: 13px; color: #333; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
-                    Rond Supérieur : <input type="color" id="color-top" value="#00ff66" style="border: none; width: 35px; height: 35px; cursor: pointer; background: transparent;">
-                </label>
-                <label style="font-size: 13px; color: #333; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
-                    Rond Inférieur : <input type="color" id="color-bottom" value="#381d18" style="border: none; width: 35px; height: 35px; cursor: pointer; background: transparent;">
-                </label>
-            </div>
-
-            <button id="btn-clear-cache" style="background: #e53935; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; text-transform: uppercase; box-shadow: 0 2px 5px rgba(229,57,53,0.2);">
-                Vider le cache hors-ligne (SW)
-            </button>
-
-            <hr style="border: none; border-top: 1px solid #eee; margin: 5px 0;">
-
-            <button id="btn-back-to-ticket" style="background: #023177; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 3px 6px rgba(2,49,119,0.2);">
-                ↩Retourner à la correspondance
-            </button>
-        </div>
-    </div>
-
-    <script>
-        function formatTwoDigits(n) { return n < 10 ? '0' + n : n; }
-
-function formatAMPM(date) {
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'p.m.' : 'a.m.';
     
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    
-    return `${hours}:${formatTwoDigits(minutes)} ${ampm}`;
-}
-
-        function generateRTCSerial() {
-            const characters = '0123456789ABCDEF';
-            let result = '1-';
-            for (let i = 0; i < 13; i++) {
-                result += characters.charAt(Math.floor(Math.random() * characters.length));
-            }
-            return result;
-        }
-        document.getElementById('serial-display').textContent = generateRTCSerial();
-
-        const now = new Date();
-        const expire = new Date(now.getTime() + 90 * 60 * 1000); 
-
-        const dateStr = `${formatTwoDigits(now.getDate())}/${formatTwoDigits(now.getMonth() + 1)}/${now.getFullYear()}`;
-
-        const timeStr = formatAMPM(now);
-        const expireTimeStr = formatAMPM(expire);
-
-        const fullActivation = `${dateStr} à ${timeStr}`;
-        const fullExpiration = `${dateStr} à ${expireTimeStr}`;
-
-        document.getElementById('activation-date').textContent = fullActivation;
-        document.getElementById('rtc-activation-date').textContent = fullActivation;
-        document.getElementById('expiration-date').textContent = fullExpiration;
-
-        const startTime = now.getTime();
-        const timerDisplay = document.getElementById('timer-display');
-        const progressBar = document.getElementById('progress-bar');
+    <div id="screen-settings" class="app-screen" style="background: white; padding: 20px; overflow-y: auto;">
+    <div style="max-width: 400px; margin: 0 auto;">
+        <div style="font-size: 20px; font-weight: bold; color: #023177; text-align: center; margin-bottom: 20px;">CONFIGURATION</div>
+        <input type="file" id="image-upload" accept="image/*" style="width: 100%; margin-bottom: 15px;">
         
-        function updateTimeline() {
-            const currentTime = new Date().getTime();
-            const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
-            const totalDuration = 90 * 60; 
+        <div id="preview-area" style="width: 100%; height: 200px; background: #eee; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 20px;">
+            <img id="image-preview" style="max-width: 100%; max-height: 100%; display: none;">
+        </div>
 
-            if (elapsedSeconds >= totalDuration) {
-                timerDisplay.textContent = "90:00";
-                progressBar.style.width = "100%";
-                return;
-            }
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button id="btn-pipette-1" style="flex: 1; padding: 12px; background: #00ff66; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 1</button>
+            <button id="btn-pipette-2" style="flex: 1; padding: 12px; background: #381d18; color: white; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 2</button>
+        </div>
+        <button id="btn-clear-cache" style="width: 100%; padding: 10px; background: #ff4d4d; color: white; border: none; border-radius: 8px; margin-bottom: 10px;">Vider le cache</button>  
+        <button id="btn-back-to-ticket" style="width: 100%; padding: 15px; background: #023177; color: white; border: none; border-radius: 8px; font-weight: bold;">Confirmer et Retourner</button>
+    </div>
+</div>
+<script>
+    function formatTwoDigits(n) { return n < 10 ? '0' + n : n; }
+    
+    function formatAMPM(date) {
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        const ampm = hours >= 12 ? 'p.m.' : 'a.m.';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        return `${hours}:${formatTwoDigits(minutes)} ${ampm}`;
+    }
 
-            let mins = Math.floor(elapsedSeconds / 60);
-            let secs = elapsedSeconds % 60;
+    function generateRTCSerial() {
+        const characters = '0123456789ABCDEF';
+        let result = '1-';
+        for (let i = 0; i < 13; i++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return result;
+    }
+    document.getElementById('serial-display').textContent = generateRTCSerial();
 
-            timerDisplay.textContent = `${formatTwoDigits(mins)}:${formatTwoDigits(secs)}`;
+    const now = new Date();
+    const expire = new Date(now.getTime() + 90 * 60 * 1000); 
 
-            let percentage = 1 + (elapsedSeconds / totalDuration) * 99;
-            progressBar.style.width = `${percentage}%`;
+    const dateStr = `${formatTwoDigits(now.getDate())}/${formatTwoDigits(now.getMonth() + 1)}/${now.getFullYear()}`;
+    const timeStr = formatAMPM(now);
+    const expireTimeStr = formatAMPM(expire);
+
+    const fullActivation = `${dateStr} à ${timeStr}`;
+    const fullExpiration = `${dateStr} à ${expireTimeStr}`;
+
+    document.getElementById('activation-date').textContent = fullActivation;
+    document.getElementById('rtc-activation-date').textContent = fullActivation;
+    document.getElementById('expiration-date').textContent = fullExpiration;
+
+    const startTime = now.getTime();
+    const timerDisplay = document.getElementById('timer-display');
+    const progressBar = document.getElementById('progress-bar');
+    
+    function updateTimeline() {
+        const currentTime = new Date().getTime();
+        const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+        const totalDuration = 90 * 60; 
+
+        if (elapsedSeconds >= totalDuration) {
+            timerDisplay.textContent = "90:00";
+            progressBar.style.width = "100%";
+            return;
         }
 
-        setInterval(updateTimeline, 1000);
-        updateTimeline();
+        let mins = Math.floor(elapsedSeconds / 60);
+        let secs = elapsedSeconds % 60;
+        timerDisplay.textContent = `${formatTwoDigits(mins)}:${formatTwoDigits(secs)}`;
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
+        let percentage = 1 + (elapsedSeconds / totalDuration) * 99;
+        progressBar.style.width = `${percentage}%`;
+    }
+
+    setInterval(updateTimeline, 1000);
+    updateTimeline();
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+    }
+
+    const screenTicket = document.getElementById('screen-ticket');
+    const screenSettings = document.getElementById('screen-settings');
+
+    document.getElementById('btn-to-settings').addEventListener('click', (e) => {
+        e.stopPropagation();
+        screenTicket.classList.remove('active');
+        screenSettings.classList.add('active');
+    });
+
+    // --- SYSTÈME DE SUIVI DE L'ORBITE ---
+    const orbitFollower = document.getElementById('orbit-follower');
+    const orbitNode = document.getElementById('orbit-node');
+    let isTracking = false;
+
+    function handlePointerDown(e) {
+        if (!screenTicket.classList.contains('active') || e.target.closest('#btn-to-settings')) return;
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+        if (clientX !== undefined && clientY !== undefined) {
+            isTracking = true;
+            orbitNode.classList.add('active-speed');
+            orbitFollower.style.position = 'fixed';
+            orbitFollower.style.width = '60px';
+            orbitFollower.style.height = '60px';
+            orbitFollower.style.transform = `translate3d(${clientX - 30}px, ${clientY - 30}px, 0)`;
         }
+    }
 
-        const screenTicket = document.getElementById('screen-ticket');
-        const screenSettings = document.getElementById('screen-settings');
-
-        document.getElementById('btn-to-settings').addEventListener('click', (e) => {
-            e.stopPropagation();
-            screenTicket.classList.remove('active');
-            screenSettings.classList.add('active');
-        });
-
-        document.getElementById('btn-back-to-ticket').addEventListener('click', () => {
-            screenSettings.classList.remove('active');
-            screenTicket.classList.add('active');
-        });
-
-        const orbitFollower = document.getElementById('orbit-follower');
-        const orbitNode = document.getElementById('orbit-node');
-        let isTracking = false;
-
-        function handlePointerDown(e) {
-
-            if (!screenTicket.classList.contains('active') || e.target.closest('#btn-to-settings')) return;
-
-            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-
-            if (clientX !== undefined && clientY !== undefined) {
-                isTracking = true;
-
-                orbitNode.classList.add('active-speed');
-
-                orbitFollower.style.position = 'fixed';
-                orbitFollower.style.width = '60px';
-                orbitFollower.style.height = '60px';
-
-                orbitFollower.style.transform = `translate3d(${clientX - 30}px, ${clientY - 30}px, 0)`;
-            }
+    function handlePointerMove(e) {
+        if (!isTracking) return;
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        if (clientX !== undefined && clientY !== undefined) {
+            orbitFollower.style.transform = `translate3d(${clientX - 30}px, ${clientY - 30}px, 0)`;
         }
+    }
 
-        function handlePointerMove(e) {
-            if (!isTracking) return;
-            
-            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-
-            if (clientX !== undefined && clientY !== undefined) {
-
-                orbitFollower.style.transform = `translate3d(${clientX - 30}px, ${clientY - 30}px, 0)`;
-            }
+    function handlePointerUp() {
+        if (isTracking) {
+            isTracking = false;
+            orbitNode.classList.remove('active-speed');
+            orbitFollower.style.position = 'absolute';
+            orbitFollower.style.width = '100%';
+            orbitFollower.style.height = '100%';
+            orbitFollower.style.transform = '';
         }
+    }
 
-        function handlePointerUp() {
-            if (isTracking) {
-                isTracking = false;
-
-                orbitNode.classList.remove('active-speed');
-
-                orbitFollower.style.position = 'absolute';
-                orbitFollower.style.width = '100%';
-                orbitFollower.style.height = '100%';
-                orbitFollower.style.transform = '';
-            }
+    screenTicket.addEventListener('mousedown', handlePointerDown);
+    window.addEventListener('mousemove', handlePointerMove);
+    window.addEventListener('mouseup', handlePointerUp);
+    screenTicket.addEventListener('touchstart', handlePointerDown, { passive: true });
+    window.addEventListener('touchmove', handlePointerMove, { passive: true });
+    window.addEventListener('touchend', handlePointerUp);
+    
+    // --- PIPETTE ET GESTION DES COULEURS ---
+    const imageUpload = document.getElementById('image-upload');
+    const imagePreview = document.getElementById('image-preview');
+    
+    imageUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                imagePreview.src = event.target.result;
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
         }
+    });
 
-        screenTicket.addEventListener('mousedown', handlePointerDown);
-        window.addEventListener('mousemove', handlePointerMove);
-        window.addEventListener('mouseup', handlePointerUp);
+    // Fonction mise à jour pour modifier directement le DOM à la volée
+    function updateColors(topColor, bottomColor) {
+        // 1. On met à jour les variables root CSS
+        document.documentElement.style.setProperty('--bubble-green', topColor);
+        document.documentElement.style.setProperty('--bubble-brown', bottomColor);
 
-        screenTicket.addEventListener('touchstart', handlePointerDown, { passive: true });
-        window.addEventListener('touchmove', handlePointerMove, { passive: true });
-        window.addEventListener('touchend', handlePointerUp);
+        // 2. CORRECTION CRITIQUE : On force aussi les styles inline des bulles pour écraser le bloc de style injecté au milieu de la page
+        const bubbleGreen = document.querySelector('.bubble.green');
+        const bubbleBrown = document.querySelector('.bubble.brown');
+        if (bubbleGreen) bubbleGreen.style.setProperty('background-color', topColor, 'important');
+        if (bubbleBrown) bubbleBrown.style.setProperty('background-color', bottomColor, 'important');
 
-        const colorTopInput = document.getElementById('color-top');
-        const colorBottomInput = document.getElementById('color-bottom');
-        const greenBubble = document.querySelector('.bubble.green');
-        const brownBubble = document.querySelector('.bubble.brown');
+        // 3. Sauvegarde locale
+        localStorage.setItem('rtc-top-color', topColor);
+        localStorage.setItem('rtc-bottom-color', bottomColor);
+    }
 
-        function applyColors(topColor, bottomColor) {
-            colorTopInput.value = topColor;
-            colorBottomInput.value = bottomColor;
-            if (greenBubble) greenBubble.style.backgroundColor = topColor;
-            if (brownBubble) brownBubble.style.backgroundColor = bottomColor;
-            localStorage.setItem('rtc-top-color', topColor);
-            localStorage.setItem('rtc-bottom-color', bottomColor);
-        }
+    async function pickColor(targetId) {
+        if (!window.EyeDropper) return;
+        const eyeDropper = new EyeDropper();
+        try {
+            const result = await eyeDropper.open();
+            const color = result.sRGBHex;
 
-        function loadSavedColors() {
-            const savedTopColor = localStorage.getItem('rtc-top-color');
-            const savedBottomColor = localStorage.getItem('rtc-bottom-color');
-            if (savedTopColor) {
-                colorTopInput.value = savedTopColor;
-                if (greenBubble) greenBubble.style.backgroundColor = savedTopColor;
-            }
-            if (savedBottomColor) {
-                colorBottomInput.value = savedBottomColor;
-                if (brownBubble) brownBubble.style.backgroundColor = savedBottomColor;
-            }
-        }
-
-        colorTopInput.addEventListener('input', (e) => {
-            if (greenBubble) greenBubble.style.backgroundColor = e.target.value;
-            localStorage.setItem('rtc-top-color', e.target.value);
-        });
-
-        colorBottomInput.addEventListener('input', (e) => {
-            if (brownBubble) brownBubble.style.backgroundColor = e.target.value;
-            localStorage.setItem('rtc-bottom-color', e.target.value);
-        });
-
-        document.getElementById('preset-1').addEventListener('click', () => {
-            applyColors('#00ff66', '#381d18');
-        });
-
-        document.getElementById('preset-2').addEventListener('click', () => {
-            applyColors('#ffcc00', '#0066cc');
-        });
-
-        loadSavedColors();
-
-        document.getElementById('btn-clear-cache').addEventListener('click', () => {
-            if ('caches' in window) {
-                caches.keys().then((keyList) => {
-                    return Promise.all(keyList.map((key) => {
-                        return caches.delete(key);
-                    }));
-                }).then(() => {
-                    if ('serviceWorker' in navigator) {
-                        navigator.serviceWorker.getRegistrations().then((registrations) => {
-                            for (let registration of registrations) {
-                                registration.unregister();
-                            }
-                        });
-                    }
-                    localStorage.clear();
-                    alert('Le cache du Service Worker et les paramètres ont été réinitialisés !');
-                    window.location.reload();
-                }).catch((err) => {
-                    alert('Erreur : ' + err);
-                });
+            if (targetId === 1) {
+                updateColors(color, localStorage.getItem('rtc-bottom-color') || '#381d18');
+                document.getElementById('btn-pipette-1').style.backgroundColor = color;
             } else {
-                alert('Action non supportée par ce terminal.');
+                updateColors(localStorage.getItem('rtc-top-color') || '#00ff66', color);
+                document.getElementById('btn-pipette-2').style.backgroundColor = color;
             }
-        });
-    </script>
+        } catch (e) { console.log("Annulé"); }
+    }
+
+    function loadSavedButtons() {
+        const savedTop = localStorage.getItem('rtc-top-color');
+        const savedBottom = localStorage.getItem('rtc-bottom-color');
+        if (savedTop) document.getElementById('btn-pipette-1').style.backgroundColor = savedTop;
+        if (savedBottom) document.getElementById('btn-pipette-2').style.backgroundColor = savedBottom;
+    }
+    window.addEventListener('load', loadSavedButtons);
+
+    // CORRECTION : Plus besoin de appyColorsLive(), on appelle updateColors() avec les données à jour
+    document.getElementById('btn-back-to-ticket').addEventListener('click', () => {
+        const topColor = localStorage.getItem('rtc-top-color') || '#00ff66';
+        const bottomColor = localStorage.getItem('rtc-bottom-color') || '#381d18';
+
+        // Applique les couleurs directement sans avoir besoin de rafraîchir
+        updateColors(topColor, bottomColor);
+
+        screenSettings.classList.remove('active');
+        screenTicket.classList.add('active');
+    });
+
+    document.getElementById('btn-pipette-1').addEventListener('click', () => pickColor(1));
+    document.getElementById('btn-pipette-2').addEventListener('click', () => pickColor(2));
+
+    document.getElementById('btn-clear-cache').addEventListener('click', () => {
+        if ('caches' in window) {
+            caches.keys().then((keyList) => {
+                return Promise.all(keyList.map((key) => {
+                    return caches.delete(key);
+                }));
+            }).then(() => {
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then((registrations) => {
+                        for (let registration of registrations) {
+                            registration.unregister();
+                        }
+                    });
+                }
+                localStorage.clear();
+                alert('Le cache du Service Worker et les paramètres ont été réinitialisés !');
+                window.location.reload();
+            }).catch((err) => {
+                alert('Erreur : ' + err);
+            });
+        } else {
+            alert('Action non supportée par ce terminal.');
+        }
+    });
+</script>
 </body>
 </html>
