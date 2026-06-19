@@ -156,7 +156,7 @@ body {
     width: 100%;
     max-width: 380px;
     margin: -10px auto 0 auto;
-    padding: 34px 16px;
+    padding: 94px 16px;
     z-index: 3;
     display: flex;
     flex-direction: column;
@@ -173,24 +173,27 @@ body {
 
 .header-ticket { 
     display: flex; 
-    align-items: stretch; 
+    align-items: center;
+    justify-content: space-between;
     background: #CDD4E2;
-    border-bottom: 1px solid #B0BCCF;
+    height: 28px;
 }
 
 .verif-badge {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0 0 12px 0;
-    padding: 8px 14px;        
+    height: 100%;
+    padding: 0 12px;
     background: white;
-    border-right: 1.7px solid #305890;
-    border-bottom: 1.7px solid #305890;
+    border-right: 1.5px solid #305890;
+    border-radius: 0 0 12px 0;
+    border-right: 1.5px solid #305890;
+    border-bottom: 1.5px solid #305890
 }
 
 .verif-badge img { 
-    height: 32px;
+    height: 18px;
     width: auto;
     display: block;
 }
@@ -262,7 +265,7 @@ body {
 }
 
 .qr-box {
-    border-left: 1px solid #3f77c5;
+    border-left: 1.5px solid #205195;
 }
 .qr-box img { 
     width: 70px; 
