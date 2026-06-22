@@ -38,7 +38,6 @@
                         <div class="bubble green"></div>
                         <div class="bubble brown"></div>
                     </div>
-
                 </div>
             </div>
         </section>
@@ -96,8 +95,8 @@
         </main>
     </div>
     
-    <div id="screen-settings" class="app-screen style="background: white; padding: 20px; overflow-y: auto;">
-        <div style="max-width: 400px; margin: 0 auto;">
+    <div id="screen-settings" class="app-screen" style="background: white; padding: 20px; overflow-y: auto;">
+        <div style="max-width: 400px; margin: 0 auto; padding: 20px;">
             <div style="font-size: 20px; font-weight: bold; color: #023177; text-align: center; margin-bottom: 20px;">CONFIGURATION</div>
             <input type="file" id="image-upload" accept="image*" style="width: 100%; margin-bottom: 15px;">
             
@@ -105,17 +104,23 @@
                 <img id="image-preview" style="max-width: 100%; max-height: 100%; display: none;">
             </div>
 
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <button id="btn-pipette-1" style="flex: 1; padding: 12px; background: #00ff66; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 1</button>
-                <input type="color" id="input-color-1" style="opacity: 0; width: 1px; height: 1px; position: absolute; pointer-events: none;">
-                <button id="btn-pipette-2" style="flex: 1; padding: 12px; background: #381d18; color: white; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 2</button>
-                <input type="color" id="input-color-2" style="opacity: 0; width: 1px; height: 1px; position: absolute; pointer-events: none;">
+            <div class="buttons-container-pipette" style="display: flex; gap: 10px; margin-bottom: 20px; position: relative;">
+                <div style="flex: 1; position: relative;">
+                    <button type="button" id="btn-pipette-1" style="width: 100%; padding: 12px; background: #00ff66; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 1</button>
+                    <input type="color" id="input-color-1" class="mobile-color-input">
+                </div>
                 
+                <div style="flex: 1; position: relative;">
+                    <button type="button" id="btn-pipette-2" style="width: 100%; padding: 12px; background: #381d18; color: white; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 2</button>
+                    <input type="color" id="input-color-2" class="mobile-color-input">
+                </div>
             </div>
+            
             <button id="btn-clear-cache" style="width: 100%; padding: 10px; background: #ff4d4d; color: white; border: none; border-radius: 8px; margin-bottom: 10px;">Vider le cache</button>  
             <button id="btn-back-to-ticket" style="width: 100%; padding: 15px; background: #023177; color: white; border: none; border-radius: 8px; font-weight: bold;">Confirmer et Retourner</button>
         </div>
     </div>
+
 <script>
     function formatTwoDigits(n) { return n < 10 ? '0' + n : n; }
     
@@ -252,12 +257,10 @@
         }
     });
 
-    // Fonction globale pour modifier et sauvegarder les couleurs
     function updateColors(topColor, bottomColor) {
         document.documentElement.style.setProperty('--bubble-green', topColor);
         document.documentElement.style.setProperty('--bubble-brown', bottomColor);
 
-        // Applique également sur les ronds du ticket au cas où
         const bubbleGreen = document.querySelector('.bubble.green');
         const bubbleBrown = document.querySelector('.bubble.brown');
         if (bubbleGreen) bubbleGreen.style.setProperty('background-color', topColor, 'important');
@@ -267,7 +270,6 @@
         localStorage.setItem('rtc-bottom-color', bottomColor);
     }
 
-    // Gestion intelligente Pipette (PC) / Sélecteur de couleur (Mobile)
     async function pickColor(targetId) {
         if (window.EyeDropper) {
             const eyeDropper = new EyeDropper();
@@ -276,13 +278,11 @@
                 handleColorSelection(targetId, result.sRGBHex);
             } catch (e) { console.log("Sélection PC annulée"); }
         } else {
-            // Mobile fallback: simule le clic sur l'input type="color" masqué
             const inputColor = document.getElementById(`input-color-${targetId}`);
             if (inputColor) inputColor.click();
         }
     }
 
-    // Applique les couleurs choisies sur les éléments et les inputs correspondants
     function handleColorSelection(targetId, color) {
         if (targetId === 1) {
             updateColors(color, localStorage.getItem('rtc-bottom-color') || '#381d18');
@@ -295,8 +295,10 @@
         }
     }
 
-document.getElementById('input-color-1').addEventListener('change', (e) => handleColorSelection(1, e.target.value));
-document.getElementById('input-color-2').addEventListener('change', (e) => handleColorSelection(2, e.target.value));
+    document.getElementById('input-color-1').addEventListener('input', (e) => handleColorSelection(1, e.target.value));
+    document.getElementById('input-color-2').addEventListener('input', (e) => handleColorSelection(2, e.target.value));
+    document.getElementById('input-color-1').addEventListener('change', (e) => handleColorSelection(1, e.target.value));
+    document.getElementById('input-color-2').addEventListener('change', (e) => handleColorSelection(2, e.target.value));
 
     function loadSavedButtons() {
         const savedTop = localStorage.getItem('rtc-top-color');
