@@ -121,12 +121,15 @@
 
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <button id="btn-pipette-1" style="flex: 1; padding: 12px; background: #00ff66; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 1</button>
+            <input type="color" id="input-color-1" style="display: none;">
             <button id="btn-pipette-2" style="flex: 1; padding: 12px; background: #381d18; color: white; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 2</button>
+            <input type="color" id="input-color-2" style="display: none;">
         </div>
         <button id="btn-clear-cache" style="width: 100%; padding: 10px; background: #ff4d4d; color: white; border: none; border-radius: 8px; margin-bottom: 10px;">Vider le cache</button>  
         <button id="btn-back-to-ticket" style="width: 100%; padding: 15px; background: #023177; color: white; border: none; border-radius: 8px; font-weight: bold;">Confirmer et Retourner</button>
     </div>
 </div>
+
 <script>
     function formatTwoDigits(n) { return n < 10 ? '0' + n : n; }
     
@@ -202,7 +205,6 @@
         screenSettings.classList.add('active');
     });
 
-    // --- SYSTÈME DE SUIVI DE L'ORBITE ---
     const orbitFollower = document.getElementById('orbit-follower');
     const orbitNode = document.getElementById('orbit-node');
     let isTracking = false;
@@ -248,8 +250,7 @@
     screenTicket.addEventListener('touchstart', handlePointerDown, { passive: true });
     window.addEventListener('touchmove', handlePointerMove, { passive: true });
     window.addEventListener('touchend', handlePointerUp);
-    
-    // --- PIPETTE ET GESTION DES COULEURS ---
+
     const imageUpload = document.getElementById('image-upload');
     const imagePreview = document.getElementById('image-preview');
     
@@ -267,52 +268,77 @@
 
     // Fonction mise à jour pour modifier directement le DOM à la volée
     function updateColors(topColor, bottomColor) {
-        // 1. On met à jour les variables root CSS
         document.documentElement.style.setProperty('--bubble-green', topColor);
         document.documentElement.style.setProperty('--bubble-brown', bottomColor);
 
-        // 2. CORRECTION CRITIQUE : On force aussi les styles inline des bulles pour écraser le bloc de style injecté au milieu de la page
         const bubbleGreen = document.querySelector('.bubble.green');
         const bubbleBrown = document.querySelector('.bubble.brown');
         if (bubbleGreen) bubbleGreen.style.setProperty('background-color', topColor, 'important');
         if (bubbleBrown) bubbleBrown.style.setProperty('background-color', bottomColor, 'important');
 
-        // 3. Sauvegarde locale
         localStorage.setItem('rtc-top-color', topColor);
         localStorage.setItem('rtc-bottom-color', bottomColor);
     }
 
+    // GESTION MOBILE + PC DE LA SÉLECTION DE COULEUR
     async function pickColor(targetId) {
-        if (!window.EyeDropper) return;
-        const eyeDropper = new EyeDropper();
-        try {
-            const result = await eyeDropper.open();
-            const color = result.sRGBHex;
-
-            if (targetId === 1) {
-                updateColors(color, localStorage.getItem('rtc-bottom-color') || '#381d18');
-                document.getElementById('btn-pipette-1').style.backgroundColor = color;
-            } else {
-                updateColors(localStorage.getItem('rtc-top-color') || '#00ff66', color);
-                document.getElementById('btn-pipette-2').style.backgroundColor = color;
+        // Mode PC : Utilisation de l'EyeDropper si disponible
+        if (window.EyeDropper) {
+            const eyeDropper = new EyeDropper();
+            try {
+                const result = await eyeDropper.open();
+                const color = result.sRGBHex;
+                handleColorSelection(targetId, color);
+            } catch (e) { console.log("Annulé sur PC"); }
+        } 
+        // Mode Mobile : Déclenche le sélecteur natif du téléphone
+        else {
+            const inputColor = document.getElementById(`input-color-${targetId}`);
+            if (inputColor) {
+                inputColor.click();
             }
-        } catch (e) { console.log("Annulé"); }
+        }
     }
+
+    // Applique et met à jour le bouton de la pipette
+    function handleColorSelection(targetId, color) {
+        if (targetId === 1) {
+            updateColors(color, localStorage.getItem('rtc-bottom-color') || '#381d18');
+            document.getElementById('btn-pipette-1').style.backgroundColor = color;
+            document.getElementById('input-color-1').value = color;
+        } else {
+            updateColors(localStorage.getItem('rtc-top-color') || '#00ff66', color);
+            document.getElementById('btn-pipette-2').style.backgroundColor = color;
+            document.getElementById('input-color-2').value = color;
+        }
+    }
+
+    // Écouteurs pour les changements sur les inputs couleurs (Mobile)
+    document.getElementById('input-color-1').addEventListener('input', (e) => {
+        handleColorSelection(1, e.target.value);
+    });
+    document.getElementById('input-color-2').addEventListener('input', (e) => {
+        handleColorSelection(2, e.target.value);
+    });
 
     function loadSavedButtons() {
         const savedTop = localStorage.getItem('rtc-top-color');
         const savedBottom = localStorage.getItem('rtc-bottom-color');
-        if (savedTop) document.getElementById('btn-pipette-1').style.backgroundColor = savedTop;
-        if (savedBottom) document.getElementById('btn-pipette-2').style.backgroundColor = savedBottom;
+        if (savedTop) {
+            document.getElementById('btn-pipette-1').style.backgroundColor = savedTop;
+            document.getElementById('input-color-1').value = savedTop;
+        }
+        if (savedBottom) {
+            document.getElementById('btn-pipette-2').style.backgroundColor = savedBottom;
+            document.getElementById('input-color-2').value = savedBottom;
+        }
     }
     window.addEventListener('load', loadSavedButtons);
-
-    // CORRECTION : Plus besoin de appyColorsLive(), on appelle updateColors() avec les données à jour
+    
     document.getElementById('btn-back-to-ticket').addEventListener('click', () => {
         const topColor = localStorage.getItem('rtc-top-color') || '#00ff66';
         const bottomColor = localStorage.getItem('rtc-bottom-color') || '#381d18';
 
-        // Applique les couleurs directement sans avoir besoin de rafraîchir
         updateColors(topColor, bottomColor);
 
         screenSettings.classList.remove('active');
