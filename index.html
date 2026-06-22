@@ -4,6 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RTC Nomade</title>
+    <style>
+        .mobile-color-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            z-index: 1;
+            cursor: pointer;
+            pointer-events: auto !important;
+            -webkit-user-select: auto !important;
+            user-select: auto !important;
+        }
+        .btn-wrapper {
+            flex: 1;
+            position: relative;
+        }
+    </style>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
 </head>
@@ -105,13 +124,13 @@
             </div>
 
             <div class="buttons-container-pipette" style="display: flex; gap: 10px; margin-bottom: 20px; position: relative;">
-                <div style="flex: 1; position: relative;">
-                    <button type="button" id="btn-pipette-1" style="width: 100%; padding: 12px; background: #00ff66; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 1</button>
+                <div class="btn-wrapper">
+                    <button type="button" id="btn-pipette-1" style="width: 100%; padding: 12px; background: #00ff66; border: none; border-radius: 8px; font-weight: bold; position: relative; z-index: 0;">Couleur Rond 1</button>
                     <input type="color" id="input-color-1" class="mobile-color-input">
                 </div>
                 
-                <div style="flex: 1; position: relative;">
-                    <button type="button" id="btn-pipette-2" style="width: 100%; padding: 12px; background: #381d18; color: white; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 2</button>
+                <div class="btn-wrapper">
+                    <button type="button" id="btn-pipette-2" style="width: 100%; padding: 12px; background: #381d18; color: white; border: none; border-radius: 8px; font-weight: bold; position: relative; z-index: 0;">Couleur Rond 2</button>
                     <input type="color" id="input-color-2" class="mobile-color-input">
                 </div>
             </div>
@@ -270,19 +289,6 @@
         localStorage.setItem('rtc-bottom-color', bottomColor);
     }
 
-    async function pickColor(targetId) {
-        if (window.EyeDropper) {
-            const eyeDropper = new EyeDropper();
-            try {
-                const result = await eyeDropper.open();
-                handleColorSelection(targetId, result.sRGBHex);
-            } catch (e) { console.log("Sélection PC annulée"); }
-        } else {
-            const inputColor = document.getElementById(`input-color-${targetId}`);
-            if (inputColor) inputColor.click();
-        }
-    }
-
     function handleColorSelection(targetId, color) {
         if (targetId === 1) {
             updateColors(color, localStorage.getItem('rtc-bottom-color') || '#381d18');
@@ -323,9 +329,6 @@
         screenSettings.classList.remove('active');
         screenTicket.classList.add('active');
     });
-
-    document.getElementById('btn-pipette-1').addEventListener('click', () => pickColor(1));
-    document.getElementById('btn-pipette-2').addEventListener('click', () => pickColor(2));
 
     document.getElementById('btn-clear-cache').addEventListener('click', () => {
         if ('caches' in window) {
