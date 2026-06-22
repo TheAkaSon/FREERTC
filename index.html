@@ -107,10 +107,10 @@
 
             <div style="display: flex; gap: 10px; margin-bottom: 20px;">
                 <button id="btn-pipette-1" style="flex: 1; padding: 12px; background: #00ff66; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 1</button>
-                <input type="color" id="input-color-1" style="display: none;">
-                
+                <input type="color" id="input-color-1" style="opacity: 0; width: 1px; height: 1px; position: absolute; pointer-events: none;">
                 <button id="btn-pipette-2" style="flex: 1; padding: 12px; background: #381d18; color: white; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 2</button>
-                <input type="color" id="input-color-2" style="display: none;">
+                <input type="color" id="input-color-2" style="opacity: 0; width: 1px; height: 1px; position: absolute; pointer-events: none;">
+                
             </div>
             <button id="btn-clear-cache" style="width: 100%; padding: 10px; background: #ff4d4d; color: white; border: none; border-radius: 8px; margin-bottom: 10px;">Vider le cache</button>  
             <button id="btn-back-to-ticket" style="width: 100%; padding: 15px; background: #023177; color: white; border: none; border-radius: 8px; font-weight: bold;">Confirmer et Retourner</button>
@@ -295,9 +295,8 @@
         }
     }
 
-    // Écouteurs pour intercepter les choix faits sur le clavier/sélecteur natif (Mobile)
-    document.getElementById('input-color-1').addEventListener('input', (e) => handleColorSelection(1, e.target.value));
-    document.getElementById('input-color-2').addEventListener('input', (e) => handleColorSelection(2, e.target.value));
+document.getElementById('input-color-1').addEventListener('change', (e) => handleColorSelection(1, e.target.value));
+document.getElementById('input-color-2').addEventListener('change', (e) => handleColorSelection(2, e.target.value));
 
     function loadSavedButtons() {
         const savedTop = localStorage.getItem('rtc-top-color');
