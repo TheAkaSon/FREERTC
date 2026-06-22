@@ -9,11 +9,10 @@
 </head>
 
 <script>
-    // Chargement ultra-rapide avant le rendu du reste
-    const savedTop = localStorage.getItem('rtc-top-color');
-    const savedBottom = localStorage.getItem('rtc-bottom-color');
-    if (savedTop) document.documentElement.style.setProperty('--green-bubble', savedTop);
-    // Note : Cela demande d'avoir défini --green-bubble dans votre style.css
+    const savedTop = localStorage.getItem('rtc-top-color') || '#00ff66';
+    const savedBottom = localStorage.getItem('rtc-bottom-color') || '#381d18';
+    document.documentElement.style.setProperty('--bubble-green', savedTop);
+    document.documentElement.style.setProperty('--bubble-brown', savedBottom);
 </script>
 
 <body>
@@ -39,19 +38,6 @@
                         <div class="bubble green"></div>
                         <div class="bubble brown"></div>
                     </div>
-                    
-                    <script>
-    (function() {
-        const savedTop = localStorage.getItem('rtc-top-color');
-        const savedBottom = localStorage.getItem('rtc-bottom-color');
-        const sheet = document.createElement('style');
-        sheet.innerHTML = `
-            .bubble.green { background-color: ${savedTop || '#00ff66'} !important; }
-            .bubble.brown { background-color: ${savedBottom || '#381d18'} !important; }
-        `;
-        document.head.appendChild(sheet);
-    })();
-</script>
 
                 </div>
             </div>
@@ -110,26 +96,26 @@
         </main>
     </div>
     
-    <div id="screen-settings" class="app-screen" style="background: white; padding: 20px; overflow-y: auto;">
-    <div style="max-width: 400px; margin: 0 auto;">
-        <div style="font-size: 20px; font-weight: bold; color: #023177; text-align: center; margin-bottom: 20px;">CONFIGURATION</div>
-        <input type="file" id="image-upload" accept="image/*" style="width: 100%; margin-bottom: 15px;">
-        
-        <div id="preview-area" style="width: 100%; height: 200px; background: #eee; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 20px;">
-            <img id="image-preview" style="max-width: 100%; max-height: 100%; display: none;">
-        </div>
+    <div id="screen-settings" class="app-screen style="background: white; padding: 20px; overflow-y: auto;">
+        <div style="max-width: 400px; margin: 0 auto;">
+            <div style="font-size: 20px; font-weight: bold; color: #023177; text-align: center; margin-bottom: 20px;">CONFIGURATION</div>
+            <input type="file" id="image-upload" accept="image*" style="width: 100%; margin-bottom: 15px;">
+            
+            <div id="preview-area" style="width: 100%; height: 200px; background: #eee; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 20px;">
+                <img id="image-preview" style="max-width: 100%; max-height: 100%; display: none;">
+            </div>
 
-        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-            <button id="btn-pipette-1" style="flex: 1; padding: 12px; background: #00ff66; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 1</button>
-            <input type="color" id="input-color-1" style="display: none;">
-            <button id="btn-pipette-2" style="flex: 1; padding: 12px; background: #381d18; color: white; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 2</button>
-            <input type="color" id="input-color-2" style="display: none;">
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button id="btn-pipette-1" style="flex: 1; padding: 12px; background: #00ff66; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 1</button>
+                <input type="color" id="input-color-1" style="display: none;">
+                
+                <button id="btn-pipette-2" style="flex: 1; padding: 12px; background: #381d18; color: white; border: none; border-radius: 8px; font-weight: bold;">Pipette Rond 2</button>
+                <input type="color" id="input-color-2" style="display: none;">
+            </div>
+            <button id="btn-clear-cache" style="width: 100%; padding: 10px; background: #ff4d4d; color: white; border: none; border-radius: 8px; margin-bottom: 10px;">Vider le cache</button>  
+            <button id="btn-back-to-ticket" style="width: 100%; padding: 15px; background: #023177; color: white; border: none; border-radius: 8px; font-weight: bold;">Confirmer et Retourner</button>
         </div>
-        <button id="btn-clear-cache" style="width: 100%; padding: 10px; background: #ff4d4d; color: white; border: none; border-radius: 8px; margin-bottom: 10px;">Vider le cache</button>  
-        <button id="btn-back-to-ticket" style="width: 100%; padding: 15px; background: #023177; color: white; border: none; border-radius: 8px; font-weight: bold;">Confirmer et Retourner</button>
     </div>
-</div>
-
 <script>
     function formatTwoDigits(n) { return n < 10 ? '0' + n : n; }
     
@@ -266,11 +252,12 @@
         }
     });
 
-    // Fonction mise à jour pour modifier directement le DOM à la volée
+    // Fonction globale pour modifier et sauvegarder les couleurs
     function updateColors(topColor, bottomColor) {
         document.documentElement.style.setProperty('--bubble-green', topColor);
         document.documentElement.style.setProperty('--bubble-brown', bottomColor);
 
+        // Applique également sur les ronds du ticket au cas où
         const bubbleGreen = document.querySelector('.bubble.green');
         const bubbleBrown = document.querySelector('.bubble.brown');
         if (bubbleGreen) bubbleGreen.style.setProperty('background-color', topColor, 'important');
@@ -280,27 +267,22 @@
         localStorage.setItem('rtc-bottom-color', bottomColor);
     }
 
-    // GESTION MOBILE + PC DE LA SÉLECTION DE COULEUR
+    // Gestion intelligente Pipette (PC) / Sélecteur de couleur (Mobile)
     async function pickColor(targetId) {
-        // Mode PC : Utilisation de l'EyeDropper si disponible
         if (window.EyeDropper) {
             const eyeDropper = new EyeDropper();
             try {
                 const result = await eyeDropper.open();
-                const color = result.sRGBHex;
-                handleColorSelection(targetId, color);
-            } catch (e) { console.log("Annulé sur PC"); }
-        } 
-        // Mode Mobile : Déclenche le sélecteur natif du téléphone
-        else {
+                handleColorSelection(targetId, result.sRGBHex);
+            } catch (e) { console.log("Sélection PC annulée"); }
+        } else {
+            // Mobile fallback: simule le clic sur l'input type="color" masqué
             const inputColor = document.getElementById(`input-color-${targetId}`);
-            if (inputColor) {
-                inputColor.click();
-            }
+            if (inputColor) inputColor.click();
         }
     }
 
-    // Applique et met à jour le bouton de la pipette
+    // Applique les couleurs choisies sur les éléments et les inputs correspondants
     function handleColorSelection(targetId, color) {
         if (targetId === 1) {
             updateColors(color, localStorage.getItem('rtc-bottom-color') || '#381d18');
@@ -313,13 +295,9 @@
         }
     }
 
-    // Écouteurs pour les changements sur les inputs couleurs (Mobile)
-    document.getElementById('input-color-1').addEventListener('input', (e) => {
-        handleColorSelection(1, e.target.value);
-    });
-    document.getElementById('input-color-2').addEventListener('input', (e) => {
-        handleColorSelection(2, e.target.value);
-    });
+    // Écouteurs pour intercepter les choix faits sur le clavier/sélecteur natif (Mobile)
+    document.getElementById('input-color-1').addEventListener('input', (e) => handleColorSelection(1, e.target.value));
+    document.getElementById('input-color-2').addEventListener('input', (e) => handleColorSelection(2, e.target.value));
 
     function loadSavedButtons() {
         const savedTop = localStorage.getItem('rtc-top-color');
